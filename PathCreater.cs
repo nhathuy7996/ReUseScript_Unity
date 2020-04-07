@@ -2,29 +2,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SetupPathGizmos : MonoBehaviour
+public class PathCreater : MonoBehaviour
 {
     [SerializeField]
-    float SpeedMovement = 1f;
-    [SerializeField]
     int Num_Path = 2;
-
+    [SerializeField]
     List<GameObject> ShowPos = new List<GameObject>();
-
-    List<Vector2> Path = new List<Vector2>();
+    [SerializeField]
+    List<Vector2> Path = new List<Vector2>(); 
+    public int Count => Path.Count;
     
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    public Vector2 GetPath(int ID = 0){
+        if(ID < 0 || ID >= Path.Count){
+            Debug.LogError("ID invalid! "+this.gameObject.name);
+            return Vector2.zero;
+        }
+        return Path[ID];
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public void SetPath(int ID,Vector2 pos){
+        if(ID < 0 || ID >= Path.Count){
+            Debug.LogError("ID invalid!");
+            return;
+        }
 
+        Path[ID] = pos;
+    }
+    #if UNITY_EDITOR
+    
     void OnDrawGizmosSelected(){
         if(ShowPos.Count < Num_Path){
             GameObject g = new GameObject();
@@ -54,6 +59,7 @@ public class SetupPathGizmos : MonoBehaviour
         for(int i = 0; i<Path.Count-1; i++){
             Gizmos.DrawLine(Path[i],Path[i+1]);
         }
+        
         if (CheckSelect()){
   
             for(int i = 0; i<ShowPos.Count; i++){
@@ -61,6 +67,8 @@ public class SetupPathGizmos : MonoBehaviour
                     continue;
                 if (UnityEditor.Selection.activeGameObject == ShowPos[i]){
                     Path[i] = ShowPos[i].transform.position;                   
+                }else{
+                    ShowPos[i].transform.position = Path[i];    
                 }
                 Gizmos.DrawWireSphere(ShowPos[i].transform.position,0.5f);
             }
@@ -72,7 +80,7 @@ public class SetupPathGizmos : MonoBehaviour
         for(int i = 0; i<ShowPos.Count; i++){
             DestroyImmediate(ShowPos[i]);
         }
-        
+        ShowPos = new List<GameObject>();
     }
 
     bool CheckSelect(){
@@ -88,4 +96,5 @@ public class SetupPathGizmos : MonoBehaviour
 
         return false;
     }
+    #endif
 }

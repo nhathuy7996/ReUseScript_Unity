@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObjectPooling_base<T> : MonoBehaviour where T : MonoBehaviour
+public class ObjectPooling_base<T,L> : MonoBehaviour where T : MonoBehaviour where L: MonoBehaviour
 {
     private static T instant = null;
     public static T Instant{
@@ -18,27 +18,25 @@ public class ObjectPooling_base<T> : MonoBehaviour where T : MonoBehaviour
     }
 
     void Awake(){
-        T[] Ts = FindObjectsOfType<T>();
-        if(Ts.Length > 1)
             Destroy(this);
     }
 
     [SerializeField]
     GameObject Obj_prefab;
-    List<GameObject> List_obj = new List<GameObject>();
+    List<L> List_obj = new List<L>();
 
 
-    protected GameObject Get_Obj(){
-        foreach(GameObject G in List_obj){
-            if(G.activeSelf){
+    protected L Get_Obj(){
+        foreach(L G in List_obj){
+            if( G.gameObject.activeSelf){
                 continue;
             }
             return G;
         }
 
-        GameObject G2 = Instantiate(Obj_prefab,this.transform.position,Quaternion.identity,this.transform);
+        L G2 = Instantiate(Obj_prefab,this.transform.position,Quaternion.identity,this.transform).GetComponent<L>();
         List_obj.Add(G2);
-        G2.SetActive(false);
+        G2.gameObject.SetActive(false);
         return G2;
     }
 }

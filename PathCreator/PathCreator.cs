@@ -17,6 +17,8 @@ public class PathCreator : MonoBehaviour
     protected bool _originalTransformPositionStatus = false;
     public bool originalTransformPositionStatus => _originalTransformPositionStatus;
 
+    
+
 
     protected virtual void Start()
     {
@@ -39,6 +41,17 @@ public class PathCreator : MonoBehaviour
         transform.position = _originalTransformPosition;
     }
 
+    public List<Vector3> getPoints()
+    {
+        List<Vector3> tmp = new List<Vector3>();
+        for (int i =0; i< List_Points.Count; i++)
+        {
+            tmp.Add(this.transform.position + List_Points[i]);
+        }
+
+        return tmp;
+    }
+
 #if UNITY_EDITOR
     protected virtual void OnDrawGizmos()
     {
@@ -57,10 +70,12 @@ public class PathCreator : MonoBehaviour
             _originalTransformPosition = transform.position;
             _originalTransformPositionStatus = true;
         }
-        if (transform.hasChanged)
-        {
-            _originalTransformPosition = transform.position;
-        }
+
+        if(!Application.isPlaying)
+            if (transform.hasChanged)
+            {
+                _originalTransformPosition = transform.position;
+            }
 
         for (int i = 0; i < List_Points.Count; i++)
         {
@@ -77,6 +92,12 @@ public class PathCreator : MonoBehaviour
 
         if (isLoop)
         {
+            if (List_Points.Count <= 2)
+            {
+                isLoop = false;
+                return;
+            }
+               
             Gizmos.color = Color.white;
             Gizmos.DrawLine(_originalTransformPosition + List_Points[List_Points.Count - 1], _originalTransformPosition + List_Points[0]);
         }

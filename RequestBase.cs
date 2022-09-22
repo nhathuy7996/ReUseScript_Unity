@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -30,39 +31,35 @@ public class RequestBase
         this.request = UnityWebRequest.Get(uri + endPoin);
     }
 
-    string dataPost;
-    public RequestBase(string endPoin, string postData)
-    {
-        //this.request = UnityWebRequest.Put(uri + endPoin, postData);
-
-
+    public RequestBase(string endPoin, string postData, RequestType type = RequestType.POST )
+    {  
         if (!string.IsNullOrEmpty(postData))
         {
-            dataPost = postData;
-            this.request = new UnityWebRequest(uri + endPoin, "POST");
+
+            this.request = new UnityWebRequest(uri + endPoin, type.ToString());
             byte[] bodyRaw = Encoding.UTF8.GetBytes(postData);
             request.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
             request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
         }
         else
             this.request = UnityWebRequest.Post(uri + endPoin, "");
-        this.request.SetRequestHeader("Content-Type", "application/json");
 
-        this.request.SetRequestHeader("Accept", "application/json");
     }
 
 
     public RequestBase setHeader(string name, string value)
     {
         this.request.SetRequestHeader(name, value);
-
         return this;
     }
 
 
-    public async Task<RequestBase> Send(System.Action<RequestBase> onDone = null)
+    public async Task<RequestBase> Send(System.Action<RequestBase> onDone = null, System.Action<RequestBase> onFail = null)
     {
         //Debug.LogError(this.request.uri+ " ---- ");
+
+        this.request.SetRequestHeader("Content-Type", "application/json");
+        this.request.SetRequestHeader("Accept", "application/json");
 
         this.request.SendWebRequest();
 
@@ -70,36 +67,57 @@ public class RequestBase
         {
             await Task.Delay(10);
         }
-
-        Debug.LogError(this.request.uri+"----"+dataPost+ " ---- "+this.responseCode+"-----" + this.response);
-
         if (!string.IsNullOrEmpty(access_token))
         {
-            Debug.LogError("=======>"+access_token);
             UserDatas.access_token = access_token;
             UserDatas.SaveLocalData();
         }
 
-        if (onDone != null)
+        if(this.request.result == UnityWebRequest.Result.Success)
         {
-            onRequestComplete(onDone);
+            if (onDone != null)
+            {
+                try
+                {
+                    onDone(this);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("request--> " + this.request.uri + "---- invoke done error: \n " + e);
+                }
+
+            }
+        }
+        else
+        {
+            Debug.LogError("send request--> " + this.request.uri
+                + "---- FAIL!!! \n "+this.request.result.ToString()+"\n " + this.request.error);
+
+            if (onFail != null)
+            {
+                try
+                {
+                    onFail(this);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("request--> " + this.request.uri + "---- invoke fail error: \n " + e);
+                }
+
+            }
         }
 
-        // Request and wait for the desired page.
         return this;
     }
 
-
-    void onRequestComplete(System.Action<RequestBase> action)
-    {
-        action(this);
-    }
+    public string getResHeader(string key) => this.request.GetResponseHeader(key);
 
     public bool isDone => this.request.isDone;
 
     public float progress => this.request.downloadProgress;
 
-    public string access_token => this.request.GetResponseHeader("x-access-token");
+    public string access_token => this.getResHeader("x-access-token");
+
     public string response => this.request.downloadHandler.text;
 
     public long responseCode => this.request.responseCode;
@@ -107,6 +125,8 @@ public class RequestBase
     public enum RequestType
     {
         GET,
-        POST
+        POST,
+        PUT,
+        DELETE
     }
 }

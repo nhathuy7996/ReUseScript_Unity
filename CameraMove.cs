@@ -5,7 +5,7 @@ using UnityEngine;
 public class CameraMove : MonoBehaviour {
     public float damping = 1.5f;
     public Transform _target;
-    public Vector2 offset = new Vector2(2f, 1f);
+    public Vector3 offset = new Vector3(2f, 1f);
 
     private bool faceLeft;
     private int lastX;
@@ -22,7 +22,7 @@ public class CameraMove : MonoBehaviour {
     public void FindPlayer()
     {
         lastX = Mathf.RoundToInt(_target.position.x);
-        transform.position = new Vector3(_target.position.x + offset.x, _target.position.y + offset.y, transform.position.z);
+        transform.position = new Vector3(_target.position.x + offset.x, _target.position.y + offset.y, _target.position.z + offset.z);
     }
 
     void FixedUpdate()
@@ -36,11 +36,11 @@ public class CameraMove : MonoBehaviour {
             Vector3 target;
             if (faceLeft)
             {
-                target = new Vector3(_target.position.x - offset.x, _target.position.y + offset.y+dynamicSpeed, transform.position.z);
+                target = new Vector3(_target.position.x - offset.x, _target.position.y + offset.y+dynamicSpeed, _target.position.z + offset.z+dynamicSpeed);
             }
             else
             {
-                target = new Vector3(_target.position.x + offset.x, _target.position.y + offset.y+dynamicSpeed, transform.position.z);
+                target = new Vector3(_target.position.x + offset.x, _target.position.y + offset.y+dynamicSpeed, _target.position.z + offset.z+dynamicSpeed);
             }
             Vector3 currentPosition = Vector3.Lerp(transform.position, target, damping * Time.deltaTime);
             transform.position = currentPosition;

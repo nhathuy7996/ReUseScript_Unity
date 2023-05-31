@@ -2,25 +2,51 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace DVAH
+namespace HuynnLib
 {
-    public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
+    public class Singleton<T> : MonoBehaviour where T : MonoBehaviour 
     {
-        private static T instant = null;
-        public static T Instant => instant;
-         
+
+        private static T _instant = null;
+        public static T Instant
+        {
+            get
+            {
+                if (_instant == null)
+                {
+                   if (FindObjectOfType<T>() != null)
+                        _instant = FindObjectOfType<T>();
+                   else
+                    new GameObject().AddComponent<T>().name = "Singleton_"+  typeof(T).ToString();
+                }
+
+                return _instant;
+            }
+        }
+       
         void Awake()
         {
-            if (instant == null)
+            if (_instant != null && _instant.gameObject.GetInstanceID() != this.gameObject.GetInstanceID())
             {
-                instant = this.GetComponent<T>();
-            } else if (!instant.GetInstanceID().Equals(this.GetInstanceID())) {
-                Debug.LogErrorFormat("Duplicated singleton between {0} - {1}!, destroy {1}",instant.gameObject.name,this.gameObject.name);
+                Debug.LogError("Singleton already exist "+ _instant.gameObject.name);
+                Destroy(this.gameObject);
             }
- 
+            else
+                _instant = this.GetComponent<T>();
         }
-        
-    }
+        // Start is called before the first frame update
+        void Start()
+        {
 
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+
+        }
+
+
+    }
 }
 

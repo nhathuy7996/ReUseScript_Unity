@@ -102,6 +102,8 @@ public class PathCreator : MonoBehaviour
             Gizmos.DrawLine(_originalTransformPosition + List_Points[List_Points.Count - 1], _originalTransformPosition + List_Points[0]);
         }
     }
+
+     
 #endif
 
 }

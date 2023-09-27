@@ -10,7 +10,7 @@ public class FixIphoneX : MonoBehaviour
     [SerializeField]
     float _Bottom = 0;
 
-    // Start is called before the first frame update
+    // Start is called before the first frame updated
     void Start()
     {
         if (_FixTop)

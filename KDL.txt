@@ -1,0 +1,20 @@
+Number - Số nguyên 2, 3, 4,5 ...
+                + -2^31 đến 2^31-1 (int) *
+                + -2^63 đến 2^63-1 (long)
+        - số thực 1.5, 3.6 .. 
+                + +/- 1.5 x 10^-45 đến +/-3.4 x 10^38 (float) *
+                + +/- 1.0 x 10^-28 đến +/-7.9228 x 10^28 (double)
+Text - Chuỗi (string) "ITPlus" "I" ""
+    - kí tự (char) 'H' 'I' ''
+
+
+Logic (bool) - true/false
+
+Cú pháp khai báo biến:
+
+(kiểu dữ liệu) (tên biến);
+
+(kiểu dữ liệu) (tên biến) = (giá trị);
+
+int A; (null)
+int A = 0;

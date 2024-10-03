@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+namespace DVAH.Lib{
 public class FelexiableLayoutGroup : LayoutGroup
 {
     public FitType fitType;
@@ -89,4 +90,5 @@ public class FelexiableLayoutGroup : LayoutGroup
         FixedColum
     }
 
+}
 }

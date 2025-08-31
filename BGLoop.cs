@@ -17,6 +17,9 @@ public class BGLoop : MonoBehaviour
         Texture image = _spriteRenderer.sprite.texture;
 
         _widthImage = image.width / _spriteRenderer.sprite.pixelsPerUnit;
+        spriteRenderer.drawMode = SpriteDrawMode.Tiled;
+        spriteRenderer.size = new Vector2(_widthImage * 5, image.height / spriteRenderer.sprite.pixelsPerUnit);
+        spriteRenderer.transform.localScale = new Vector3(1,1,1);
     }
 
     // Update is called once per frame
